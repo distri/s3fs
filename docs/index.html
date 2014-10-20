@@ -39,11 +39,8 @@
 SHA1 = require <span class="string">"sha1"</span>
 
 <span class="function"><span class="title">mount</span></span> = (indexSHA, uploader) -&gt;
-  console.log <span class="string">"Mounting <span class="subst">#{indexSHA}</span>"</span>
   uploader.get(indexSHA).<span class="keyword">then</span> (blob) -&gt;
-    console.log <span class="string">"got: "</span>, blob
     readAsJSON(blob).<span class="keyword">then</span> (index) -&gt;
-      console.log <span class="string">"read: "</span>, index
       persist: -&gt;
         persist(index, uploader)
 
@@ -54,7 +51,12 @@ SHA1 = require <span class="string">"sha1"</span>
       read: (name) -&gt;
         sha = index[name]
 
-        uploader.get(sha)
+        uploader.get(sha).<span class="keyword">then</span> readAsText
+
+      readAsBlob: (name) -&gt;
+        sha = index[name]
+
+        uploader.get(sha).<span class="keyword">then</span> readAsText
 
 <span class="comment"># Sync index data to backing store</span>
 <span class="function"><span class="title">persist</span></span> = (index, uploader) -&gt;

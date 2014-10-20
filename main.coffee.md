@@ -7,11 +7,8 @@ An S3 backed file system.
     SHA1 = require "sha1"
 
     mount = (indexSHA, uploader) ->
-      console.log "Mounting #{indexSHA}"
       uploader.get(indexSHA).then (blob) ->
-        console.log "got: ", blob
         readAsJSON(blob).then (index) ->
-          console.log "read: ", index
           persist: ->
             persist(index, uploader)
 
@@ -22,7 +19,12 @@ An S3 backed file system.
           read: (name) ->
             sha = index[name]
 
-            uploader.get(sha)
+            uploader.get(sha).then readAsText
+
+          readAsBlob: (name) ->
+            sha = index[name]
+
+            uploader.get(sha).then readAsText
 
     # Sync index data to backing store
     persist = (index, uploader) ->
